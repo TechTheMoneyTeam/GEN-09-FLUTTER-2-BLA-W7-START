@@ -11,19 +11,13 @@ import 'widgets/ride_pref_history_tile.dart';
 
 const String blablaHomeImagePath = 'assets/images/blabla_home.png';
 
-///
-/// This screen allows user to:
-/// - Enter his/her ride preference and launch a search on it
-/// - Or select a last entered ride preferences and launch a search on it
-///
 class RidePrefScreen extends StatelessWidget {
   const RidePrefScreen({super.key});
 
   void onRidePrefSelected(BuildContext context, RidePreference newPreference) async {
-    // 1 - Update the current preference using the provider
+  
     context.read<RidesPreferencesProvider>().setCurrentPreferrence(newPreference);
 
-    // 2 - Navigate to the rides screen (with a bottom to top animation)
     await Navigator.of(context)
         .push(AnimationUtils.createBottomToTopRoute(RidesScreen(
           ridesService: context.read(),
@@ -37,13 +31,13 @@ Widget build(BuildContext context) {
   final pastPreferences = provider.preferencesHistory;
 
   return Scaffold( 
-    backgroundColor: Colors.white, // Ensure good contrast
+    backgroundColor: Colors.white, 
     body: Stack(
       children: [
-        // 1 - Background Image
+   
         const BlaBackground(),
 
-        // 2 - Foreground content
+
         Column(
           children: [
             SizedBox(height: BlaSpacings.m),
@@ -68,10 +62,10 @@ Widget build(BuildContext context) {
                   ),
                   SizedBox(height: BlaSpacings.m),
 
-                  // 2.2 Display past preferences with a proper Material ancestor
+               
                   SizedBox(
                     height: 200,
-                    child: Material( // ✅ Added Material to ensure ListTile works
+                    child: Material( 
                       child: ListView.builder(
                         shrinkWrap: true,
                         physics: AlwaysScrollableScrollPhysics(),
@@ -105,7 +99,7 @@ class BlaBackground extends StatelessWidget {
       height: 340,
       child: Image.asset(
         blablaHomeImagePath,
-        fit: BoxFit.cover, // Adjust image fit to cover the container
+        fit: BoxFit.cover, 
       ),
     );
   }
