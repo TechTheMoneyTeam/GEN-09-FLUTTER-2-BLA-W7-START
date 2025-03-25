@@ -49,11 +49,10 @@ class _RidePrefModalState extends State<RidePrefModal> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(10),
-     child: RidePrefForm(
-  initialPref: widget.initialPreference,  // Updated name
-  onRidePrefSelected: onSubmit, onSubmit: (RidePreference ) {  },           // Updated name
-),
-
+                child: RidePrefForm(
+                  initialPreference: widget.initialPreference,
+                  onSubmit: onSubmit,
+                ),
               ),
             ),
           ],

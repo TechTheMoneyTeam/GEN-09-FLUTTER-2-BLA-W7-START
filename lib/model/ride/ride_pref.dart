@@ -17,26 +17,19 @@ class RidePreference {
       required this.requestedSeats});
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is RidePreference &&
-        other.departure == departure &&
-        other.departureDate == departureDate &&
-        other.arrival == arrival &&
-        other.requestedSeats == requestedSeats;
-  }
-
-  @override
-  int get hashCode => Object.hash(departure, departureDate, arrival, requestedSeats); 
+bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RidePreference &&
+          runtimeType == other.runtimeType &&
+          departure == other.departure &&
+          departureDate == other.departureDate &&
+          arrival == other.arrival &&
+          requestedSeats == other.requestedSeats;
+          
   String toString() {
     return 'RidePref(departure: ${departure.name}, '
         'departureDate: ${departureDate.toIso8601String()}, '
         'arrival: ${arrival.name}, '
         'requestedSeats: $requestedSeats)';
   }
-
-  static defaultPreference() {}
 }
-
-
-
