@@ -6,21 +6,32 @@ class RidesPreferencesProvider extends ChangeNotifier {
   RidePreference? _currentPreference;
   List<RidePreference> _pastPreferences = [];
   final RidePreferencesRepository repository;
+  bool _isLoading = false;
+  bool _hasError = false;
 
   RidesPreferencesProvider({required this.repository}) {
     fetchPastPreferences();
   }
 
   RidePreference? get currentPreference => _currentPreference;
+  bool get isLoading => _isLoading;
+  bool get hasError => _hasError;
 
   Future<void> fetchPastPreferences() async {
+    _isLoading = true;
+    _hasError = false;
+    notifyListeners();
+
     try {
       _pastPreferences = await repository.getPastPreferences();
-      notifyListeners();
+      _isLoading = false;
     } catch (error) {
-  
+      _isLoading = false;
+      _hasError = true;
       print('Error fetching past preferences: $error');
     }
+    
+    notifyListeners();
   }
 
   void setCurrentPreference(RidePreference pref) async {
@@ -32,7 +43,7 @@ class RidesPreferencesProvider extends ChangeNotifier {
   }
 
   Future<void> _addPreference(RidePreference preference) async {
-    // Approach 2: Call repository and update provider cache
+ 
     await repository.addPreference(preference);
     
     _pastPreferences.removeWhere((pref) => pref == preference);
