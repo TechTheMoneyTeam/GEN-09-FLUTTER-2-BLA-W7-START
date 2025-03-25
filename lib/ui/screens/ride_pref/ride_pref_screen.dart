@@ -16,7 +16,7 @@ class RidePrefScreen extends StatelessWidget {
 
   void onRidePrefSelected(BuildContext context, RidePreference newPreference) async {
   
-    context.read<RidesPreferencesProvider>().setCurrentPreferrence(newPreference);
+    context.read<RidesPreferencesProvider>().setCurrentPreference(newPreference);
 
     await Navigator.of(context)
         .push(AnimationUtils.createBottomToTopRoute(RidesScreen(

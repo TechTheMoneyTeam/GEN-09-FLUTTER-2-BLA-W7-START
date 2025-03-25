@@ -8,24 +8,34 @@ class RidesPreferencesProvider extends ChangeNotifier {
   final RidePreferencesRepository repository;
 
   RidesPreferencesProvider({required this.repository}) {
-    _pastPreferences = repository.getPastPreferences();
+    fetchPastPreferences();
   }
 
   RidePreference? get currentPreference => _currentPreference;
 
-  void setCurrentPreferrence(RidePreference pref) {
+  Future<void> fetchPastPreferences() async {
+    try {
+      _pastPreferences = await repository.getPastPreferences();
+      notifyListeners();
+    } catch (error) {
+  
+      print('Error fetching past preferences: $error');
+    }
+  }
+
+  void setCurrentPreference(RidePreference pref) async {
     if (_currentPreference != pref) {
       _currentPreference = pref;
-
-      _addPreference(pref);
-
+      await _addPreference(pref);
       notifyListeners();
     }
   }
 
-  void _addPreference(RidePreference preference) {
+  Future<void> _addPreference(RidePreference preference) async {
+    // Approach 2: Call repository and update provider cache
+    await repository.addPreference(preference);
+    
     _pastPreferences.removeWhere((pref) => pref == preference);
-
     _pastPreferences.add(preference);
   }
 
