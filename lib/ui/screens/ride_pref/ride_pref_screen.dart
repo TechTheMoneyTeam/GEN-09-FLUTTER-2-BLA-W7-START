@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../model/ride/ride_pref.dart';
-import '../../../provider/ride_pref_provider.dart';
+import '../../provider/ride_pref_provider.dart';
 import '../../../utils/animations_util.dart';
 import '../../theme/theme.dart';
 import '../rides/rides_screen.dart';
