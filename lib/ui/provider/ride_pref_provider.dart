@@ -1,60 +1,62 @@
-import 'package:flutter/foundation.dart';
-import '../../model/ride/ride_pref.dart';
-import '../../data/repository/ride_preferences_repository.dart';
-import 'async_value.dart';
+// ignore_for_file: await_only_futures
+
+import 'package:flutter/material.dart';
+import 'package:week_3_blabla_project/model/ride/ride_pref.dart';
+import 'package:week_3_blabla_project/data/repository/ride_preferences_repository.dart' show RidePreferencesRepository;
+import 'package:week_3_blabla_project/ui/provider/async_value.dart';
+
 
 class RidesPreferencesProvider extends ChangeNotifier {
-  RidePreference? currentPreference;
-  AsyncValue<List<RidePreference>> pastPreferences = AsyncValue.loading();
+  RidePreference? _currentPreference;
   final RidePreferencesRepository repository;
+  late AsyncValue<List<RidePreference>> pastPreferences;
 
   RidesPreferencesProvider({required this.repository}) {
-    fetchPastPreferences();
+    // For now past preferences are fetched only 1 time
+    // Your code
+    _fetchPastPreferences();
   }
 
-  Future<void> fetchPastPreferences() async {
+  RidePreference? get currentPreference => _currentPreference;
+  void setCurrentPreference(RidePreference pref) {
+    // Your code
+    if (currentPreference != pref) {
+      _currentPreference = pref;
+
+      addPreference(pref);
+    }
+    notifyListeners();
+  }
+
+  void addPreference(RidePreference pref) async {
+    if (!pastPreferences.data!.contains(pref)) {
+      // remove the past if duplicate place is found
+      pastPreferences.data!.remove(pref);
+      pastPreferences.data!.add(pref);
+
+      // update the list of past preferences
+      await repository.addPreference(pref);
+    }
+    notifyListeners();
+  }
+
+  Future<void> _fetchPastPreferences() async {
+    // 1- Handle loading
     pastPreferences = AsyncValue.loading();
     notifyListeners();
-
     try {
-      final preferences = await repository.getPastPreferences();
-      pastPreferences = preferences.isEmpty 
-          ? AsyncValue.empty() 
-          : AsyncValue.success(preferences);
+      // 2 Fetch data
+      List<RidePreference> pastPrefs = await repository.getPastPreferences();
+      // 3 Handle success
+      pastPreferences = AsyncValue.success(pastPrefs);
+      // 4 Handle error
     } catch (error) {
       pastPreferences = AsyncValue.error(error);
     }
-    
     notifyListeners();
   }
 
-  Future<void> setCurrentPreference(RidePreference preference) async {
-    currentPreference = preference;
-    
-    try {
-      await repository.addPreference(preference);
-      
-      if (pastPreferences.state == AsyncValueState.success) {
-        final updatedPreferences = List<RidePreference>.from(pastPreferences.data!)
-          ..removeWhere((pref) => pref == preference)
-          ..add(preference);
-        
-        pastPreferences = updatedPreferences.isEmpty 
-            ? AsyncValue.empty() 
-            : AsyncValue.success(updatedPreferences);
-      } else {
-        pastPreferences = AsyncValue.success([preference]);
-      }
-    } catch (error) {
-      pastPreferences = AsyncValue.error(error); 
-    }
-    
-    notifyListeners();
-  }
-
-  List<RidePreference> get preferencesHistory {
-    return pastPreferences.state == AsyncValueState.success 
-        ? (pastPreferences.data?.reversed.toList() ?? []) 
-        : [];
-  }
+  // History is returned from newest to oldest preference
+  List<RidePreference> get preferencesHistory =>
+      pastPreferences.data!.reversed.toList();
 }
